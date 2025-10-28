@@ -1,1 +1,17 @@
+name: Webhook Test
 
+on:
+  workflow_dispatch:  # enables manual trigger in GitHub UI
+
+jobs:
+  send-webhook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send POST request to webhook
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"message": "Manual workflow triggered", "repo": "${{ github.repository }}", "by": "${{ github.actor }}"}'
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
