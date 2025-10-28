@@ -1,25 +1,23 @@
-name: Manual Teams Webhook Trigger
+name: Manual Power Automate Trigger
 
 on:
   workflow_dispatch:
     inputs:
       title:
-        description: 'Title of the Teams message'
+        description: 'Title for Power Automate / Teams card'
         required: true
         default: 'Manual Workflow Triggered'
       message:
-        description: 'Message body for the Teams post'
+        description: 'Message text for Power Automate / Teams card'
         required: true
         default: 'This workflow was manually triggered.'
 
 jobs:
-  post-to-teams:
+  send-to-power-automate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send POST to Microsoft Teams webhook
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      - name: Send Adaptive Card payload to Power Automate
         run: |
           curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
@@ -49,3 +47,5 @@ jobs:
                 }
               ]
             }"
+        env:
+          WEBHOOK_URL: ${{ secrets.POWER_AUTOMATE_WEBHOOK_URL }}
