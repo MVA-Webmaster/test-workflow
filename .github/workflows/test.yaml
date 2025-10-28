@@ -18,6 +18,8 @@ jobs:
 
     steps:
       - name: Send POST to Microsoft Teams webhook
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
           curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
@@ -29,5 +31,3 @@ jobs:
               \"title\": \"${{ github.event.inputs.title }}\",
               \"text\": \"${{ github.event.inputs.message }}\n\nRepository: ${{ github.repository }}\nTriggered by: ${{ github.actor }}\"
             }"
-        env:
-          WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
