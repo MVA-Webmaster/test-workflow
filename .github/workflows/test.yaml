@@ -24,10 +24,28 @@ jobs:
           curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
             -d "{
-              \"@type\": \"MessageCard\",
-              \"@context\": \"https://schema.org/extensions\",
-              \"summary\": \"GitHub Workflow Notification\",
-              \"themeColor\": \"0076D7\",
-              \"title\": \"${{ github.event.inputs.title }}\",
-              \"text\": \"${{ github.event.inputs.message }}\n\nRepository: ${{ github.repository }}\nTriggered by: ${{ github.actor }}\"
+              \"type\": \"message\",
+              \"attachments\": [
+                {
+                  \"contentType\": \"application/vnd.microsoft.card.adaptive\",
+                  \"content\": {
+                    \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",
+                    \"type\": \"AdaptiveCard\",
+                    \"version\": \"1.4\",
+                    \"body\": [
+                      {
+                        \"type\": \"TextBlock\",
+                        \"size\": \"Large\",
+                        \"weight\": \"Bolder\",
+                        \"text\": \"${{ github.event.inputs.title }}\"
+                      },
+                      {
+                        \"type\": \"TextBlock\",
+                        \"text\": \"${{ github.event.inputs.message }}\n\nRepository: ${{ github.repository }}\nTriggered by: ${{ github.actor }}\",
+                        \"wrap\": true
+                      }
+                    ]
+                  }
+                }
+              ]
             }"
