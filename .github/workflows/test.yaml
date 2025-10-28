@@ -1,17 +1,33 @@
-name: Webhook Test
+name: Manual Teams Webhook Trigger
 
 on:
-  workflow_dispatch:  # enables manual trigger in GitHub UI
+  workflow_dispatch:
+    inputs:
+      title:
+        description: 'Title of the Teams message'
+        required: true
+        default: 'Manual Workflow Triggered'
+      message:
+        description: 'Message body for the Teams post'
+        required: true
+        default: 'This workflow was manually triggered.'
 
 jobs:
-  send-webhook:
+  post-to-teams:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send POST request to webhook
+      - name: Send POST to Microsoft Teams webhook
         run: |
           curl -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
-            -d '{"message": "Manual workflow triggered", "repo": "${{ github.repository }}", "by": "${{ github.actor }}"}'
+            -d "{
+              \"@type\": \"MessageCard\",
+              \"@context\": \"https://schema.org/extensions\",
+              \"summary\": \"GitHub Workflow Notification\",
+              \"themeColor\": \"0076D7\",
+              \"title\": \"${{ github.event.inputs.title }}\",
+              \"text\": \"${{ github.event.inputs.message }}\n\nRepository: ${{ github.repository }}\nTriggered by: ${{ github.actor }}\"
+            }"
         env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
